@@ -1,3 +1,4 @@
+'use strict';
 const store = {
   items: [
     { id: cuid(), name: 'apples', checked: false },
@@ -8,11 +9,29 @@ const store = {
   hideCheckedItems: false
 };
 
+const editListItemName = function(id, itemName) {
+  const item = store.items.find(item => item.id === id);
+  item.name=itemName;
+};
+
+const handleEditListItemName = function() {
+  $('.js-shopping-list').on('submit', '.js-edit-item', event => {
+    event.preventDefault();
+    const id = getItemIdFromElement(event.currentTarget);
+    const itemName = $(event.currentTarget).find('.shopping-item').val();
+    editListItemName(id, itemName);
+    render();
+  });
+};
+
+
 const generateItemElement = function (item) {
   let itemTitle = `<span class='shopping-item shopping-item__checked'>${item.name}</span>`;
   if (!item.checked) {
     itemTitle = `
-     <span class='shopping-item'>${item.name}</span>
+    <form class="js-edit-item">
+     <input class='shopping-item'>${item.name}</input>
+     </form>
     `;
   }
 
@@ -160,6 +179,7 @@ const handleShoppingList = function () {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleToggleFilterClick();
+  handleEditListItemName();
 };
 
 // when the page loads, call `handleShoppingList`
